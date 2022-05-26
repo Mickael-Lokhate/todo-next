@@ -5,8 +5,8 @@ function Todos({ todos }) {
   return (
     <Layout title="To-do List">
       <div className="todos-container">
-        {todos.map((t) => (
-          <Todo todo={t} />
+        {todos.map((t, i) => (
+          <Todo key={i} todo={t} />
         ))}
 
         <style jsx>{`
