@@ -3,10 +3,20 @@ import { useState } from "react";
 import Layout from "../../components/Layout";
 import Todo from "../../components/Todo";
 
+const categories = [
+  { id: 0, name: "Work", color: "#E7AD99" },
+  { id: 1, name: "Home", color: "#CE796B" },
+  { id: 2, name: "Projects", color: "#C18C5D" },
+  { id: 3, name: "Perso", color: "#495867" },
+];
+
 function Todos({ todos }) {
   const router = useRouter();
   const { id: idCat } = router.query;
   const [allTodos, setTodos] = useState(todos.filter((t) => t.cat_id == idCat));
+  let cat = categories.filter((c) => c.id == idCat);
+  if (cat && cat.length === 1)
+    cat = cat[0];
 
   const handleChecked = (id) => {
     const newArray = [...allTodos];
@@ -25,12 +35,13 @@ function Todos({ todos }) {
 
   return (
     <Layout title="To-do List">
+      <div className="blur-bg"></div>
       <div className="todos-container">
         {allTodos.map((t, i) => (
           <Todo key={i} todo={t} handleChecked={handleChecked} />
         ))}
-
-        <style jsx>{`
+      </div>
+      <style jsx>{`
           .todos-container {
             width: 50%;
             margin: 0 auto;
@@ -38,8 +49,17 @@ function Todos({ todos }) {
             flex-direction: column;
             text-align: left;
           }
+
+          .blur-bg {
+            position: absolute;
+            top: 0;
+            z-index: -1;
+            width: 100%;
+            height: 40% !important;
+            background: ${cat.color};
+            filter: blur(200px);
+          }
         `}</style>
-      </div>
     </Layout>
   );
 }
