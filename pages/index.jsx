@@ -1,64 +1,39 @@
-import { useState, useEffect } from "react";
 import Layout from "../components/Layout";
-import Todo from "../components/Todo";
+import Category from "../components/Category";
 
-function Todos({ todos }) {
-  const [allTodos, setTodos] = useState(todos);
-
-  const handleChecked = (id) => {
-    console.log(`CLICK ${id}`);
-    const newArray = [...allTodos];
-    if (newArray.find((t) => t.id === id).checked)
-      newArray.find((t) => t.id === id).checked = false;
-    else newArray.find((t) => t.id === id).checked = true;
-
-    newArray.sort((a, b) => {
-      if (a.checked) return 1;
-      else if (b.checked) return -1;
-      else return 0;
-    });
-
-    setTodos(newArray);
-  };
-
-  useEffect(() => {}, [allTodos]);
-
+function Home({ categories }) {
   return (
-    <Layout title="To-do List">
-      <div className="todos-container">
-        {allTodos.map((t, i) => (
-          <Todo key={i} todo={t} handleChecked={handleChecked} />
+    <Layout title={"Home"}>
+      <div className="categories">
+        {categories.map((c, i) => (
+          <Category category={c} key={i} />
         ))}
-
-        <style jsx>{`
-          .todos-container {
-            width: 50%;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-          }
-        `}</style>
       </div>
+
+      <style jsx>{`
+        .categories {
+          width: 60%;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 1em;
+        }
+      `}</style>
     </Layout>
   );
 }
 
-Todos.getInitialProps = async () => {
-  const todos = [
-    { id: 0, title: "Test 1", desc: "My first todo", checked: false },
-    { id: 1, title: "Test 2", desc: "My second todo", checked: false },
-    { id: 2, title: "Test 3", desc: "My third todo", checked: true },
-    { id: 3, title: "Test 4", desc: "My fourth todo", checked: false },
+Home.getInitialProps = async () => {
+  const categories = [
+    { id: 0, name: "Work", color: "#E7AD99" },
+    { id: 1, name: "Home", color: "#CE796B" },
+    { id: 2, name: "Projects", color: "#C18C5D" },
+    { id: 3, name: "Perso", color: "#495867" },
   ];
-  todos.sort((a, b) => {
-    if (a.checked) return 1;
-    else if (b.checked) return -1;
-    return 0;
-  });
+
   return {
-    todos,
+    categories,
   };
 };
 
-export default Todos;
+export default Home;
