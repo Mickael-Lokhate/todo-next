@@ -3,19 +3,9 @@ import { useState } from "react";
 import Layout from "../../components/Layout";
 import Todo from "../../components/Todo";
 
-const categories = [
-  { id: 0, name: "Work", color: "#E7AD99" },
-  { id: 1, name: "Home", color: "#CE796B" },
-  { id: 2, name: "Projects", color: "#C18C5D" },
-  { id: 3, name: "Perso", color: "#495867" },
-];
-
-function Todos({ todos }) {
+function Todos({ todos, category }) {
   const router = useRouter();
-  const { id: idCat } = router.query;
-  const [allTodos, setTodos] = useState(todos.filter((t) => t.cat_id == idCat));
-  let cat = categories.filter((c) => c.id == idCat);
-  if (cat && cat.length === 1) cat = cat[0];
+  const [allTodos, setTodos] = useState(todos);
 
   const handleChecked = async (id) => {
     const query = `mutation CheckTodo($id: Int!) {
@@ -66,7 +56,7 @@ function Todos({ todos }) {
           z-index: -1;
           width: 100%;
           height: 40% !important;
-          background: ${cat.color};
+          background: ${category.color};
           filter: blur(200px);
         }
       `}</style>
@@ -74,9 +64,10 @@ function Todos({ todos }) {
   );
 }
 
-Todos.getInitialProps = async () => {
-  const query = `query {
-    todos {
+Todos.getInitialProps = async ({ query }) => {
+  const cat_id = parseInt(query.id);
+  const queryAPI = `query TodosByCat($cat_id: Int!) {
+    todosByCat(cat_id: $cat_id) {
       id,
       title,
       desc,
@@ -92,12 +83,34 @@ Todos.getInitialProps = async () => {
       Accept: "application/json",
     },
     body: JSON.stringify({
-      query,
+      query: queryAPI,
+      variables: { cat_id },
     }),
   });
   const data = (await res.json()).data;
+
+  const queryCatAPI = `query Category($id: Int!) {
+    category(id: $id) {
+      id,
+      name,
+      color
+    }
+  }`;
+  const resCat = await fetch("http://localhost:3001/api", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      query: queryCatAPI,
+      variables: { id: cat_id },
+    }),
+  });
+  const dataCat = (await resCat.json()).data;
   return {
-    todos: data.todos,
+    todos: data.todosByCat,
+    category: dataCat.category,
   };
 };
 
