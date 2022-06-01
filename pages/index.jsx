@@ -24,15 +24,26 @@ function Home({ categories }) {
 }
 
 Home.getInitialProps = async () => {
-  const categories = [
-    { id: 0, name: "Work", color: "#E7AD99" },
-    { id: 1, name: "Home", color: "#CE796B" },
-    { id: 2, name: "Projects", color: "#C18C5D" },
-    { id: 3, name: "Perso", color: "#495867" },
-  ];
-
+  const query = `query {
+    categories {
+      id,
+      name,
+      color
+    }
+  }`;
+  const res = await fetch("http://localhost:3001/api", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({
+      query,
+    }),
+  });
+  const data = (await res.json()).data;
   return {
-    categories,
+    categories: data.categories,
   };
 };
 

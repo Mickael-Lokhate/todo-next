@@ -15,22 +15,32 @@ function Todos({ todos }) {
   const { id: idCat } = router.query;
   const [allTodos, setTodos] = useState(todos.filter((t) => t.cat_id == idCat));
   let cat = categories.filter((c) => c.id == idCat);
-  if (cat && cat.length === 1)
-    cat = cat[0];
+  if (cat && cat.length === 1) cat = cat[0];
 
-  const handleChecked = (id) => {
-    const newArray = [...allTodos];
-    if (newArray.find((t) => t.id === id).checked)
-      newArray.find((t) => t.id === id).checked = false;
-    else newArray.find((t) => t.id === id).checked = true;
-
-    newArray.sort((a, b) => {
-      if (a.checked) return 1;
-      else if (b.checked) return -1;
-      else return 0;
+  const handleChecked = async (id) => {
+    const query = `mutation CheckTodo($id: Int!) {
+      checkTodo(id: $id) {
+        id,
+        title,
+        checked,
+        desc,
+        cat_id
+      }
+    }`;
+    const res = await fetch("http://localhost:3001/api", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        query,
+        variables: { id },
+      }),
     });
-
-    setTodos(newArray);
+    const data = (await res.json()).data.checkTodo;
+    const newTodos = allTodos.filter((t) => t.id != data.id);
+    setTodos([...newTodos, data]);
   };
 
   return (
@@ -42,60 +52,52 @@ function Todos({ todos }) {
         ))}
       </div>
       <style jsx>{`
-          .todos-container {
-            width: 50%;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-          }
+        .todos-container {
+          width: 50%;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          text-align: left;
+        }
 
-          .blur-bg {
-            position: absolute;
-            top: 0;
-            z-index: -1;
-            width: 100%;
-            height: 40% !important;
-            background: ${cat.color};
-            filter: blur(200px);
-          }
-        `}</style>
+        .blur-bg {
+          position: absolute;
+          top: 0;
+          z-index: -1;
+          width: 100%;
+          height: 40% !important;
+          background: ${cat.color};
+          filter: blur(200px);
+        }
+      `}</style>
     </Layout>
   );
 }
 
 Todos.getInitialProps = async () => {
-  const todos = [
-    {
-      id: 0,
-      title: "Test 1",
-      desc: "My first todo",
-      checked: false,
-      cat_id: 0,
+  const query = `query {
+    todos {
+      id,
+      title,
+      desc,
+      cat_id,
+      checked
+    }
+  }`;
+
+  const res = await fetch("http://localhost:3001/api", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
     },
-    {
-      id: 1,
-      title: "Test 2",
-      desc: "My second todo",
-      checked: false,
-      cat_id: 1,
-    },
-    { id: 2, title: "Test 3", desc: "My third todo", checked: true, cat_id: 3 },
-    {
-      id: 3,
-      title: "Test 4",
-      desc: "My fourth todo",
-      checked: false,
-      cat_id: 2,
-    },
-  ];
-  todos.sort((a, b) => {
-    if (a.checked) return 1;
-    else if (b.checked) return -1;
-    return 0;
+    body: JSON.stringify({
+      query,
+    }),
   });
+  const data = (await res.json()).data;
   return {
-    todos,
+    todos: data.todos,
   };
 };
 
