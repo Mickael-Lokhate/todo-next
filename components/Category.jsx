@@ -18,6 +18,7 @@ function Category({ category }) {
             padding: 20px;
             filter: drop-shadow(2px 2px 5px ${category.color});
             transition: all 0.5s;
+            border-radius: 5px;
           }
 
           .icon-container {

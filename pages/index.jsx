@@ -1,7 +1,20 @@
 import Layout from "../components/Layout";
 import Category from "../components/Category";
+import FloatButton from "../components/FloatButton";
+import React from "react";
+import Modal from "react-modal";
 
 function Home({ categories }) {
+  const [isModalOpen, setModalOpen] = React.useState(false);
+
+  const handleClickCategory = () => {
+    setModalOpen(true);
+  };
+
+  const onCloseModal = () => {
+    setModalOpen(false);
+  };
+
   return (
     <Layout title={"Home"}>
       <div className="categories">
@@ -19,6 +32,20 @@ function Home({ categories }) {
           gap: 1em;
         }
       `}</style>
+
+      <Modal
+        onRequestClose={onCloseModal}
+        isOpen={isModalOpen}
+        contentLabel="test"
+      >
+        <h2>Add a Category</h2>
+      </Modal>
+      <FloatButton
+        color={"#12aadd"}
+        size={100}
+        title="Add a category"
+        CustomOnClick={handleClickCategory}
+      />
     </Layout>
   );
 }
