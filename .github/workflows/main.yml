@@ -32,6 +32,9 @@ jobs:
       - name: Installing dependencing
         run: npm install
         
+      - name: Starting server
+        run: npm dev
+        
       - name: Running the tests
         run: npm run test_ci
 
