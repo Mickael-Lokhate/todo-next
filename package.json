@@ -4,7 +4,8 @@
   "description": "To-do List to practice Next.JS",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cypress open",
+    "test_ci": "cypress run",
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
