@@ -23,10 +23,6 @@ function MyDocument() {
           rel="stylesheet"
         />
         <link
-          href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.1.0/mdb.min.css"
-          rel="stylesheet"
-        />
-        <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css"
         ></link>

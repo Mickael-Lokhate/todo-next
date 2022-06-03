@@ -83,6 +83,7 @@ function Home({ categories }) {
   return (
     <Layout title={"Home"}>
       <div className="categories">
+        <h2>My Categories</h2>
         {cat.map((c, i) => (
           <Category category={c} key={i} />
         ))}

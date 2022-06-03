@@ -6,6 +6,10 @@ import Todo from "../../components/Todo";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import ProgressBar from "react-bootstrap/ProgressBar";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/fontawesome-free-solid";
 
 function AddTodoForm({ modal, cat_id, setTodos }) {
   const [formValues, setFormValues] = useState({
@@ -79,6 +83,12 @@ function Todos({ todos, category }) {
   const router = useRouter();
   const [allTodos, setTodos] = useState(todos);
   const [modalOpen, setModalOpen] = useState(false);
+  const [numberTodosChecked, setTodosChecked] = useState(
+    todos.filter((t) => t.checked).length
+  );
+  const [percent, setPercent] = useState(
+    Math.floor((numberTodosChecked * 100) / todos.length)
+  );
 
   const handleChecked = async (id) => {
     const query = `mutation CheckTodo($id: Int!) {
@@ -103,7 +113,11 @@ function Todos({ todos, category }) {
     });
     const data = (await res.json()).data.checkTodo;
     const newTodos = allTodos.filter((t) => t.id != data.id);
-    setTodos([...newTodos, data]);
+    const finalTodos = [...newTodos, data];
+    const todosChecked = finalTodos.filter((t) => t.checked).length;
+    setTodosChecked(todosChecked);
+    setPercent(Math.floor((todosChecked * 100) / finalTodos.length));
+    setTodos(finalTodos);
   };
 
   const openModal = () => {
@@ -114,9 +128,29 @@ function Todos({ todos, category }) {
   };
 
   return (
-    <Layout title={category.name}>
+    <Layout>
       <div className="blur-bg"></div>
+
       <div className="todos-container">
+        <div className="top">
+          <div className="title">
+            <Link href="/">
+              <a className="link" title="Go back">
+                <FontAwesomeIcon icon={faArrowLeft} size="2x" color="#343a40" />
+              </a>
+            </Link>
+            <h1>{category.name}</h1>
+            <div></div>
+          </div>
+
+          <ProgressBar
+            now={percent}
+            label={`${percent}%`}
+            variant="success"
+            animated
+          />
+        </div>
+
         {allTodos.map((t, i) => (
           <Todo key={i} todo={t} handleChecked={handleChecked} />
         ))}
@@ -133,6 +167,29 @@ function Todos({ todos, category }) {
           display: flex;
           flex-direction: column;
           text-align: left;
+        }
+
+        .top {
+          margin-bottom: 1em;
+        }
+        h1 {
+          margin: 0;
+        }
+
+        .title {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.5em;
+        }
+
+        .link {
+          text-decoration: none;
+        }
+
+        .link:hover {
+          cursor: pointer;
+          opacity: 0.9;
         }
 
         .blur-bg {
