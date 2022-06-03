@@ -87,7 +87,7 @@ function Todos({ todos, category }) {
     todos.filter((t) => t.checked).length
   );
   const [percent, setPercent] = useState(
-    Math.floor((numberTodosChecked * 100) / todos.length)
+    todos.length ? Math.floor((numberTodosChecked * 100) / todos.length) : 0
   );
 
   const handleChecked = async (id) => {
@@ -116,7 +116,11 @@ function Todos({ todos, category }) {
     const finalTodos = [...newTodos, data];
     const todosChecked = finalTodos.filter((t) => t.checked).length;
     setTodosChecked(todosChecked);
-    setPercent(Math.floor((todosChecked * 100) / finalTodos.length));
+    setPercent(
+      finalTodos.length
+        ? Math.floor((todosChecked * 100) / finalTodos.length)
+        : 0
+    );
     setTodos(finalTodos);
   };
 
