@@ -81,7 +81,7 @@ function Home({ categories }) {
   };
 
   return (
-    <Layout title={"Home"}>
+    <Layout title={"To-Do List"}>
       <div className="categories">
         <h2>My Categories</h2>
         {cat.map((c, i) => (
